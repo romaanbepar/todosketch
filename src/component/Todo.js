@@ -3,21 +3,51 @@ import React, { useState } from "react";
 const Todo = () => {
   const [inputData, setInputData] = useState("");
   const [item, setItem] = useState([]);
+  const [toggle, setToggle] = useState(true);
+  const [isEditItem,setIsEditItem]=useState(null);
 
   //adding the items
   const addItem = () => {
     if (!inputData) {
       alert("pls fill the text");
-    } else {
-      setItem([...item, inputData]);
+    } else if(inputData && !toggle) {
+
+      setItem(
+        item.map((elem)=>{
+          if(elem.id===isEditItem){
+            return{...elem,name:inputData}
+          }
+          return elem;
+        })
+      )
+      setToggle(true);
+    setInputData('');
+    setIsEditItem(null);
+    }
+      else {
+      const allInputData = {
+        id: new Date().getTime().toString(),
+        name: inputData,
+      };
+      setItem([...item, allInputData]);
       setInputData("");
     }
   };
 
+  //editind the existing items.
+  const editItems = (id) => {
+    let newEdit = item.find((elem) => {
+      return elem.id === id;
+    });
+    setToggle(false);
+    setInputData(newEdit.name);
+    setIsEditItem(id)
+  };
+
   //deleting the items
-  const deleteItems = (id) => {
-    const update = item.filter((elem, ind) => {
-      return ind !== id;
+  const deleteItems = (index) => {
+    const update = item.filter((elem) => {
+      return index !== elem.id;
     });
     setItem(update);
   };
@@ -38,22 +68,37 @@ const Todo = () => {
               value={inputData}
               onChange={(e) => setInputData(e.target.value)}
             />
-            <i
-              className="fa fa-plus add-btn"
-              title="Add item"
-              onClick={addItem}
-            ></i>
+            {toggle ? (
+              <i
+                className="fa fa-plus add-btn"
+                title="Add item"
+                onClick={addItem}
+              ></i>
+            ) : (
+              <i
+                className="far fa-edit add-btn"
+                title="submit item"
+                onClick={addItem}
+              ></i>
+            )}
           </div>
           <div className="showItems">
-            {item.map((elem, id) => {
+            {item.map((elem) => {
               return (
-                <div className="eachItem" key={id}>
-                  <h3>{elem}</h3>
-                  <i
-                    className="far fa-trash-alt add-btn"
-                    title="Delete item"
-                    onClick={() => deleteItems(id)}
-                  ></i>
+                <div className="eachItem" key={elem.id}>
+                  <h3>{elem.name}</h3>
+                  <div className="todo-btn">
+                    <i
+                      className="far fa-edit add-btn"
+                      title="Edit item"
+                      onClick={() => editItems(elem.id)}
+                    ></i>
+                    <i
+                      className="far fa-trash-alt add-btn"
+                      title="Delete item"
+                      onClick={() => deleteItems(elem.id)}
+                    ></i>
+                  </div>
                 </div>
               );
             })}
