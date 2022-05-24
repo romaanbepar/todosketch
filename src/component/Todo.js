@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 const Todo = () => {
   const [inputData, setInputData] = useState("");
   const [item, setItem] = useState([]);
@@ -9,7 +10,15 @@ const Todo = () => {
   //adding the items
   const addItem = () => {
     if (!inputData) {
-      alert("pls fill the text");
+      toast.error("pls fill the text",{
+        position: "top-center",
+        draggable: true,
+        progress: undefined,
+        
+      });
+
+      
+     
     } else if(inputData && !toggle) {
 
       setItem(
@@ -111,7 +120,9 @@ const Todo = () => {
             >
               <span>CHECK LIST</span>
             </button>
+            
           </div>
+          <ToastContainer className="foo" style={{ fontSize: "20px",color:"black" }}/>
         </div>
       </div>
     </>
